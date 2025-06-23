@@ -1,0 +1,36 @@
+{
+  "dependencies": [
+    {
+      "name": "flixel",
+      "type": "haxelib",
+      "version": "6.1.0"
+    },
+    {
+      "name": "flixel-addons",
+      "type": "haxelib",
+      "version": "3.3.2"
+    },
+    {
+      "name": "flixel-modding",
+      "type": "haxelib",
+      "version": "1.1.0"
+    },
+    {
+      "name": "flixel-screenshot-plugin",
+      "type": "git",
+      "dir": null,
+      "ref": "236c6a210df4c3b13176771e89096003ffa57a35",
+      "url": "https://github.com/dotevie/flixel-screenshot-plugin"
+    },
+    {
+      "name": "flixel-utilities",
+      "type": "haxelib",
+      "version": "1.0.0"
+    },
+    {
+      "name": "throwingshade",
+      "type": "haxelib",
+      "version": "0.0.1"
+    }
+  ]
+}

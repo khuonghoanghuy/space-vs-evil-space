@@ -1,0 +1,5 @@
+- [ ] Done player space sprites
+- [X] Done added save data game
+- [ ] Added Modding system
+- [ ] Done level thoughts using scripts
+- [ ] Done Menu ui sprites
