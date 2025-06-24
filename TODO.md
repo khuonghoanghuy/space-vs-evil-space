@@ -1,5 +1,9 @@
 - [ ] Done player space sprites
 - [X] Done added save data game
-- [ ] Added Modding system
+- [X] Added Modding system (as replaced assets)
 - [ ] Done level thoughts using scripts
 - [ ] Done Menu ui sprites
+- [X] Done shooting system
+- [ ] Done effect when hit enemy
+- [ ] Done effect when player bullet hit enemy
+- [ ] Done Gameplay ui

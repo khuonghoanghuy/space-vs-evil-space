@@ -7,7 +7,6 @@ import flixel.FlxG;
 	public var name:String = "";
 	public var totalScore:Int = 0;
 	public var totalCash:Int = 0;
-	public var allowScreenShot:Bool = true;
 }
 
 class GameData
