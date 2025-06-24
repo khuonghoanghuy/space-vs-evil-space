@@ -8,4 +8,4 @@
 - [ ] Done effect when player bullet hit enemy
 - [ ] Done Gameplay ui
 - [X] Done bullet sprites
-- [ ] Done bullet fire particle
+- [X] Done bullet fire emttier (as sprites)

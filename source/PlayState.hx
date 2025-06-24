@@ -13,6 +13,7 @@ class PlayState extends FlxState
 {
 	public var levelScript:Scripted;
 	public var player:Player;
+	public var playerEmttier:FlxSprite;
 	public var bullets:Array<FlxSprite> = [];
 	public var shootTimer:FlxTimer;
 	public var starBackdrop:FlxBackdrop;
@@ -38,6 +39,15 @@ class PlayState extends FlxState
 		player.screenCenter(Y);
 		add(player);
 
+		playerEmttier = new FlxSprite(player.x + player.width / 2, player.y + player.height / 2);
+		playerEmttier.loadGraphic(Paths.images('emttier_bullet'), true, 32, 32);
+		playerEmttier.animation.add("idle", [0]);
+		playerEmttier.animation.add("fire", [0, 1, 2, 3], 10, false);
+		playerEmttier.animation.play("idle");
+		playerEmttier.alpha = 0;
+		playerEmttier.screenCenter(Y);
+		add(playerEmttier);
+
 		FlxTween.tween(player, {x: 50}, 0.5, {
 			ease: FlxEase.sineInOut,
 			onComplete: function(tween:FlxTween)
@@ -61,8 +71,9 @@ class PlayState extends FlxState
 
 		player.update(elapsed);
 		levelScript.call('update', [elapsed]);
+		playerEmttier.setPosition((player.x + player.width / 2 - 4) + 20, (player.y + player.height / 2 - 4) - 12);
 
-		if (player.allowMove || FlxG.keys.pressed.Z && shootTimer.finished)
+		if (player.allowMove && FlxG.keys.pressed.Z && shootTimer.finished)
 		{
 			shoot();
 			shootTimer.start(0.1);
@@ -75,6 +86,19 @@ class PlayState extends FlxState
 				remove(bullet);
 				bullets.remove(bullet);
 				bullet.destroy();
+				if (bullets.length == 0)
+				{
+					playerEmttier.animation.play("fire");
+					playerEmttier.animation.onFinish.add(function(animation:String)
+					{
+						switch (animation)
+						{
+							case "fire":
+								playerEmttier.alpha = 0;
+								playerEmttier.animation.play("idle");
+						}
+					});
+				}
 				break;
 			}
 		}
@@ -82,12 +106,15 @@ class PlayState extends FlxState
 
 	function shoot()
 	{
+		playerEmttier.alpha = 1;
+		playerEmttier.animation.play("idle", true);
 		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
 		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
 		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
 		bullet.animation.play("fire");
 		bullet.velocity.x = 600;
 		add(bullet);
+
 		bullets.push(bullet);
 	}
 }
