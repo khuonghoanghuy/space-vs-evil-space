@@ -20,7 +20,10 @@ class Player extends FlxSprite
 	{
 		super(x, y);
 
-		makeGraphic(32, 32, 0xff00ff00);
+		loadGraphic(Paths.images('playerSpace'), true, 32, 32);
+		updateFramePixels();
+		setSize(31, 14);
+		centerOffsets();
 	}
 
 	override function update(elapsed:Float)
@@ -29,14 +32,20 @@ class Player extends FlxSprite
 
 		if (allowMove)
 		{
+			var speed = 100;
+			if (FlxG.keys.pressed.SHIFT)
+			{
+				speed = 50;
+			}
+
 			if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
 			{
-				x += (FlxG.keys.pressed.RIGHT ? 1 : -1) * 100 * elapsed;
+				x += (FlxG.keys.pressed.RIGHT ? 1 : -1) * speed * elapsed;
 			}
 
 			if (FlxG.keys.pressed.UP || FlxG.keys.pressed.DOWN)
 			{
-				y += (FlxG.keys.pressed.DOWN ? 1 : -1) * 100 * elapsed;
+				y += (FlxG.keys.pressed.DOWN ? 1 : -1) * speed * elapsed;
 			}
 		}
 

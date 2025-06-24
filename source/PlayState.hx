@@ -15,9 +15,11 @@ class PlayState extends FlxState
 	public var levelScript:Scripted;
 	public var player:Player;
 	public var playerEmttier:FlxSprite;
+	public var enemies:Array<Enemy> = [];
 	public var bullets:Array<FlxSprite> = [];
 	public var shootTimer:FlxTimer;
 	public var starBackdrops:FlxSpriteGroup;
+	public var currentTime:Float = 0;
 
 	public static var instance:PlayState = null;
 
@@ -80,9 +82,29 @@ class PlayState extends FlxState
 		levelScript.call('create', []);
 	}
 
+	public function addEnemy(x:Float, y:Float, ?doTween:Bool = false, ?tweenX:Float = 0, ?tweenY:Float = 0):Enemy
+	{
+		var enemy = new Enemy(x, y);
+		add(enemy);
+		if (doTween)
+		{
+			FlxTween.tween(enemy, {x: tweenX, y: tweenY}, 0.5, {ease: FlxEase.sineInOut});
+		}
+
+		enemies.push(enemy);
+		return enemy;
+	}
+
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		currentTime += elapsed * 2;
+
+		if (currentTime % 1 == 0)
+		{
+			trace('Current Time: ' + currentTime);
+		}
 
 		player.update(elapsed);
 		levelScript.call('update', [elapsed]);

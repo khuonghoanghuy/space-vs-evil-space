@@ -1,4 +1,4 @@
-- [ ] Done player space sprites
+- [X] Done player space sprites
 - [X] Done added save data game
 - [X] Added Modding system (as replaced assets)
 - [ ] Done level thoughts using scripts
