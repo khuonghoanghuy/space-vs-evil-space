@@ -20,6 +20,8 @@ class PlayState extends FlxState
 	public var shootTimer:FlxTimer;
 	public var starBackdrops:FlxSpriteGroup;
 	public var currentTime:Float = 0;
+	public var lastWholeSecond:Int = 0;
+	public var currentWholeSecond:Int = 0;
 
 	public static var instance:PlayState = null;
 
@@ -82,7 +84,7 @@ class PlayState extends FlxState
 		levelScript.call('create', []);
 	}
 
-	public function addEnemy(x:Float, y:Float, ?doTween:Bool = false, ?tweenX:Float = 0, ?tweenY:Float = 0):Enemy
+	public function addEnemy(id:Int, x:Float, y:Float, ?doTween:Bool = false, ?tweenX:Float = 0, ?tweenY:Float = 0):Enemy
 	{
 		var enemy = new Enemy(x, y);
 		add(enemy);
@@ -91,19 +93,48 @@ class PlayState extends FlxState
 			FlxTween.tween(enemy, {x: tweenX, y: tweenY}, 0.5, {ease: FlxEase.sineInOut});
 		}
 
-		enemies.push(enemy);
+		var exists = false;
+		for (e in enemies)
+		{
+			if (e.ID == id)
+			{
+				exists = true;
+				break;
+			}
+		}
+		if (!exists)
+		{
+			enemy.ID = id;
+			enemies.push(enemy);
+		}
+		else
+		{
+			remove(enemy);
+			enemy.destroy();
+			return null;
+		}
 		return enemy;
+	}
+
+	public function getEnemy(num:Int):Enemy
+	{
+		if (num < 0 || num >= enemies.length)
+		{
+			return null;
+		}
+		return enemies[num];
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		currentTime += elapsed * 2;
-
-		if (currentTime % 1 == 0)
+		currentTime += elapsed;
+		currentWholeSecond = Std.int(currentTime);
+		if (currentWholeSecond > lastWholeSecond)
 		{
-			trace('Current Time: ' + currentTime);
+			FlxG.watch.addQuick("currentWholeSecond", currentWholeSecond);
+			lastWholeSecond = currentWholeSecond;
 		}
 
 		player.update(elapsed);
@@ -137,6 +168,21 @@ class PlayState extends FlxState
 					});
 				}
 				break;
+			}
+
+			for (enemy in enemies)
+			{
+				if (bullet.overlaps(enemy))
+				{
+					remove(enemy);
+					enemies.remove(enemy);
+					enemy.destroy();
+
+					remove(bullet);
+					bullets.remove(bullet);
+					bullet.destroy();
+					break;
+				}
 			}
 		}
 	}

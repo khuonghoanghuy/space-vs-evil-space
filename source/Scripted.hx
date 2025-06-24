@@ -31,6 +31,8 @@ class Scripted
 
 		iris.set('game', PlayState.instance);
 
+		trace('Scripted: ' + file + '.hxc loaded');
+
 		iris.execute();
 	}
 
