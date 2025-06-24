@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
+import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -16,7 +17,7 @@ class PlayState extends FlxState
 	public var playerEmttier:FlxSprite;
 	public var bullets:Array<FlxSprite> = [];
 	public var shootTimer:FlxTimer;
-	public var starBackdrop:FlxBackdrop;
+	public var starBackdrops:FlxSpriteGroup;
 
 	public static var instance:PlayState = null;
 
@@ -26,13 +27,27 @@ class PlayState extends FlxState
 
 		super.create();
 
-		starBackdrop = new FlxBackdrop();
-		starBackdrop.loadGraphic(Paths.images("stars"));
-		starBackdrop.velocity.x = -10;
-		starBackdrop.scale.set(0.6, 0.6);
-		starBackdrop.updateHitbox();
-		starBackdrop.setPosition(0, 0);
-		add(starBackdrop);
+		starBackdrops = new FlxSpriteGroup();
+		for (i in 0...3)
+		{
+			var stardrop = new FlxBackdrop();
+			stardrop.loadGraphic(Paths.images("stars"));
+			switch (i)
+			{
+				case 0:
+					stardrop.velocity.x = -10;
+					stardrop.scale.set(0.5, 0.5);
+				case 1:
+					stardrop.velocity.x = -30;
+					stardrop.scale.set(0.7, 0.7);
+				case 2:
+					stardrop.velocity.x = -60;
+			}
+			stardrop.updateHitbox();
+			stardrop.setPosition(0, 0);
+			starBackdrops.add(stardrop);
+		}
+		add(starBackdrops);
 
 		player = new Player(-500, 0);
 		player.allowBound = player.allowMove = false;
@@ -108,6 +123,7 @@ class PlayState extends FlxState
 	{
 		playerEmttier.alpha = 1;
 		playerEmttier.animation.play("idle", true);
+
 		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
 		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
 		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
