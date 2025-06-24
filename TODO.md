@@ -7,3 +7,5 @@
 - [ ] Done effect when hit enemy
 - [ ] Done effect when player bullet hit enemy
 - [ ] Done Gameplay ui
+- [X] Done bullet sprites
+- [ ] Done bullet fire particle

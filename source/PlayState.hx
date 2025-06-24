@@ -3,6 +3,9 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.display.FlxBackdrop;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 
@@ -12,6 +15,7 @@ class PlayState extends FlxState
 	public var player:Player;
 	public var bullets:Array<FlxSprite> = [];
 	public var shootTimer:FlxTimer;
+	public var starBackdrop:FlxBackdrop;
 
 	public static var instance:PlayState = null;
 
@@ -21,8 +25,26 @@ class PlayState extends FlxState
 
 		super.create();
 
-		player = new Player(0, 0);
+		starBackdrop = new FlxBackdrop();
+		starBackdrop.loadGraphic(Paths.images("stars"));
+		starBackdrop.velocity.x = -10;
+		starBackdrop.scale.set(0.6, 0.6);
+		starBackdrop.updateHitbox();
+		starBackdrop.setPosition(0, 0);
+		add(starBackdrop);
+
+		player = new Player(-500, 0);
+		player.allowBound = player.allowMove = false;
+		player.screenCenter(Y);
 		add(player);
+
+		FlxTween.tween(player, {x: 50}, 0.5, {
+			ease: FlxEase.sineInOut,
+			onComplete: function(tween:FlxTween)
+			{
+				player.allowBound = player.allowMove = true;
+			}
+		});
 
 		shootTimer = new FlxTimer();
 		shootTimer.finished = true;
@@ -40,7 +62,7 @@ class PlayState extends FlxState
 		player.update(elapsed);
 		levelScript.call('update', [elapsed]);
 
-		if (FlxG.keys.pressed.Z && shootTimer.finished)
+		if (player.allowMove || FlxG.keys.pressed.Z && shootTimer.finished)
 		{
 			shoot();
 			shootTimer.start(0.1);
@@ -60,9 +82,11 @@ class PlayState extends FlxState
 
 	function shoot()
 	{
-		var bullet = new FlxSprite(player.x + player.width / 2 - 4, player.y + player.height / 2 - 4);
-		bullet.makeGraphic(8, 8, FlxColor.WHITE);
-		bullet.velocity.x = 400;
+		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
+		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
+		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
+		bullet.animation.play("fire");
+		bullet.velocity.x = 600;
 		add(bullet);
 		bullets.push(bullet);
 	}
