@@ -101,10 +101,16 @@ class CreateLevelState extends FlxState
 		var levelData = {
 			enemies: enemies.map(e ->
 			{
-				return {x: e.x, y: e.y};
+				var gridX = Std.int(e.x / 32);
+				var gridY = Std.int(e.y / 32);
+				return {
+					id: 'enemy_${gridX}_${gridY}',
+					x: e.x,
+					y: e.y
+				};
 			})
 		};
-		var json = haxe.Json.stringify(levelData);
+		var json = haxe.Json.stringify(levelData, '\t');
 		var dir = "saveContent";
 		if (!sys.FileSystem.exists(dir))
 		{
