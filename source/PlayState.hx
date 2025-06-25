@@ -78,10 +78,8 @@ class PlayState extends FlxState
 		shootTimer = new FlxTimer();
 		shootTimer.finished = true;
 
-		levelScript = new Scripted(Paths.data('world1/level1'));
-		levelScript.iris.execute(); // execute again
-
-		levelScript.call('create', []);
+		// levelScript = new Scripted(Paths.data('world1/level1'));
+		// levelScript.call('create', []);
 	}
 
 	public function addEnemy(id:Int, x:Float, y:Float, ?doTween:Bool = false, ?tweenX:Float = 0, ?tweenY:Float = 0):Enemy
@@ -129,6 +127,11 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
+		if (FlxG.keys.justPressed.ESCAPE)
+		{
+			FlxG.switchState(() -> new CreateLevelState());
+		}
+
 		currentTime += elapsed;
 		currentWholeSecond = Std.int(currentTime);
 		if (currentWholeSecond > lastWholeSecond)
@@ -138,7 +141,7 @@ class PlayState extends FlxState
 		}
 
 		player.update(elapsed);
-		levelScript.call('update', [elapsed]);
+		// levelScript.call('update', [elapsed]);
 		playerEmttier.setPosition((player.x + player.width / 2 - 4) + 20, (player.y + player.height / 2 - 4) - 12);
 
 		if (player.allowMove && FlxG.keys.pressed.Z && shootTimer.finished)
