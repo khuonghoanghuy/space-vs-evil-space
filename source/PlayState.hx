@@ -324,9 +324,29 @@ class PlayState extends FlxState
 			{
 				if (bullet.overlaps(enemy))
 				{
-					remove(enemy);
-					enemies.remove(enemy);
-					enemy.destroy();
+					enemy.health -= 15; // first bullet is so weak
+					if (enemy.health <= 0)
+					{
+						FlxTween.tween(enemy, {x: enemy.x + 20, alpha: 0}, 0.15, {
+							ease: FlxEase.linear,
+							onComplete: function(tween:FlxTween)
+							{
+								remove(enemy);
+								enemies.remove(enemy);
+								enemy.destroy();
+							}
+						});
+					}
+					else
+					{
+						FlxTween.tween(enemy, {x: enemy.x + 5}, 0.05, {
+							ease: FlxEase.linear,
+							onComplete: function(tween:FlxTween)
+							{
+								FlxTween.tween(enemy, {x: enemy.x - 5}, 0.05, {ease: FlxEase.linear});
+							}
+						});
+					}
 
 					remove(bullet);
 					bullets.remove(bullet);
