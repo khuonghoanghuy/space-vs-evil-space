@@ -9,4 +9,10 @@
 - [ ] Done Gameplay ui
 - [X] Done bullet sprites
 - [X] Done bullet fire emttier (as sprites)
-- [ ] Done creating level system state
+- [ ] Done creating level system state:
+    - [X] Save Level
+    - [X] Open Level
+    - [X] Placing Enemy
+    - [X] Remove Enemy
+    - [ ] Select Enemy, config how they should do
+    - [ ] Allow to select other type of the Enemy

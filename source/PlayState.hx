@@ -198,7 +198,6 @@ class PlayState extends FlxState
 		var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
 		for (enemyData in enemiesArray)
 		{
-			// Default to LEFT since CreateLevelState doesn't save startFrom
 			var startFrom:EnemyStartForm = LEFT;
 			var x:Float = enemyData.x != null ? enemyData.x : 0;
 			var y:Float = enemyData.y != null ? enemyData.y : 0;

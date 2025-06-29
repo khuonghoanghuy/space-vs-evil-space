@@ -17,6 +17,7 @@ class CreateLevelState extends FlxState
 	var nameLevelInput:FlxInputText;
 	var allowType:Bool = false;
 	var saveButton:FlxButton;
+	var openButton:FlxButton;
 
 	override public function create()
 	{
@@ -48,7 +49,6 @@ class CreateLevelState extends FlxState
 		nameLevelInput.visible = false;
 
 		saveButton = new FlxButton(FlxG.width - 100, FlxG.height - 50, "Save", saveFunction);
-		// saveButton.set(null, 16, FlxColor.WHITE, LEFT, OUTLINE, FlxColor.BLACK);
 		saveButton.loadGraphic(Paths.images("button"), true, 80, 20);
 		saveButton.animation.add("idle", [0]);
 		saveButton.animation.add("hover", [1]);
@@ -57,6 +57,26 @@ class CreateLevelState extends FlxState
 		saveButton.scrollFactor.set(0, 0);
 		add(saveButton);
 		saveButton.visible = false;
+
+		saveButton = new FlxButton(FlxG.width - 180, FlxG.height - 50, "Save", saveFunction);
+		saveButton.loadGraphic(Paths.images("button"), true, 80, 20);
+		saveButton.animation.add("idle", [0]);
+		saveButton.animation.add("hover", [1]);
+		saveButton.animation.add("pressed", [2, 3, 0]);
+		saveButton.animation.play("idle");
+		saveButton.scrollFactor.set(0, 0);
+		add(saveButton);
+		saveButton.visible = false;
+
+		openButton = new FlxButton(FlxG.width - 90, FlxG.height - 50, "Open", openFunction);
+		openButton.loadGraphic(Paths.images("button"), true, 80, 20);
+		openButton.animation.add("idle", [0]);
+		openButton.animation.add("hover", [1]);
+		openButton.animation.add("pressed", [2, 3, 0]);
+		openButton.animation.play("idle");
+		openButton.scrollFactor.set(0, 0);
+		add(openButton);
+		openButton.visible = false;
 	}
 
 	override function update(elapsed:Float)
@@ -74,7 +94,7 @@ class CreateLevelState extends FlxState
 
 		if (FlxG.keys.justPressed.TAB)
 			allowType = !allowType;
-		nameLevelInput.visible = saveButton.visible = allowType;
+		nameLevelInput.visible = saveButton.visible = openButton.visible = allowType;
 		if (FlxG.mouse.overlaps(saveButton))
 		{
 			saveButton.animation.play("hover");
@@ -119,6 +139,38 @@ class CreateLevelState extends FlxState
 		var fileName = dir + "/" + Std.string(nameLevelInput.text) + ".json";
 		File.saveContent(fileName, json);
 		FlxG.log.add("Level saved to " + fileName);
+	}
+
+	// Open the level
+	function openFunction():Void
+	{
+		if (!sys.FileSystem.exists("saveContent/" + nameLevelInput.text + ".json"))
+		{
+			trace('Level file not found: ${"saveContent/" + nameLevelInput.text + ".json"}');
+			return;
+		}
+
+		try
+		{
+			for (enemy in enemies)
+			{
+				remove(enemy);
+				enemy.destroy();
+			}
+			enemies = [];
+
+			var levelData = haxe.Json.parse(File.getContent("saveContent/" + nameLevelInput.text + ".json"));
+			var enemiesArray:Array<Dynamic> = cast levelData.enemies;
+			for (enemyData in enemiesArray)
+			{
+				addEnemy(enemyData.x, enemyData.y);
+			}
+		}
+		catch (e:Dynamic)
+		{
+			trace('Have some trouble while loading ${"saveContent/" + nameLevelInput.text + ".json"}: ${Std.string(e)}');
+			return;
+		}
 	}
 
 	function addEnemy(x:Float, y:Float)
