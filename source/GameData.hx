@@ -4,19 +4,12 @@ import flixel.FlxG;
 
 @:structInit class SaveData
 {
-	public var name:String = "";
-	public var totalScore:Int = 0;
-	public var totalCash:Int = 0;
+	public var howScoreGet:String = "Normal";
 }
 
 class GameData
 {
 	public static var saveData:SaveData = {};
-
-	public static function getSaveData(fieldName:String):Dynamic
-	{
-		return Reflect.getProperty(saveData, fieldName);
-	}
 
 	public static function initSaveData()
 	{

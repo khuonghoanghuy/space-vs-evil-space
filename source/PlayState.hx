@@ -1,13 +1,16 @@
 package;
 
 import Enemy.EnemyStartForm;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxSpriteGroup;
+import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import haxe.Json;
 import sys.io.File;
@@ -95,6 +98,61 @@ class PlayState extends FlxState
 
 		shootTimer = new FlxTimer();
 		shootTimer.finished = true;
+
+		setupUI();
+	}
+
+	/**
+	 * Special camera for UI
+	 */
+	public var cameraHUD:FlxCamera;
+
+	/**
+	 * Display score text
+	 */
+	public var scoreText:FlxText;
+
+	/**
+	 * Current score you get
+	 * 
+	 * Default is 0
+	 */
+	public var currentScore:Int = 0;
+
+	/**
+	 * Create a various UI such as score text, health bar and stuff
+	 */
+	function setupUI()
+	{
+		cameraHUD = new FlxCamera();
+		cameraHUD.bgColor = FlxColor.TRANSPARENT;
+		FlxG.cameras.add(cameraHUD, false);
+
+		scoreText = new FlxText(10, 10, 0, "Score: " + getScore(), 20, false);
+		scoreText.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		scoreText.camera = cameraHUD;
+		add(scoreText);
+	}
+
+	/**
+	 * Get current score
+	 * @return Return to string, no matter is that, muahhehehhehe
+	 */
+	public function getScore():String
+	{
+		return Std.string(currentScore);
+	}
+
+	/**
+	 * Update the current score
+	 * @param num Amount of score want to updated
+	 * @return Return to `getScore()` function
+	 */
+	public function updateScore(num:Int):String
+	{
+		currentScore += num;
+		scoreText.text = "Score: " + getScore();
+		return getScore();
 	}
 
 	/**
@@ -274,6 +332,15 @@ class PlayState extends FlxState
 					remove(bullet);
 					bullets.remove(bullet);
 					bullet.destroy();
+
+					switch (GameData.saveData.howScoreGet.toLowerCase())
+					{
+						case "normal":
+							updateScore(15);
+						case "random":
+							updateScore(FlxG.random.int(1, 15));
+					}
+
 					break;
 				}
 			}
