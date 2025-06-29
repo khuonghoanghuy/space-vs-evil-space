@@ -1,95 +1,174 @@
 package;
 
-import flixel.FlxG;
-import flixel.FlxSprite;
+import Enemy.EnemyStartForm;
 import flixel.FlxState;
-import flixel.addons.display.FlxBackdrop;
-import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
+import haxe.Json;
+import sys.io.File;
 
+/**
+ * Contains Game Data, Gameplay and such, an important class for the game
+ */
 class PlayState extends FlxState
 {
-	public var levelScript:Scripted;
-	public var player:Player;
-	public var playerEmttier:FlxSprite;
-	public var enemies:Array<Enemy> = [];
-	public var bullets:Array<FlxSprite> = [];
-	public var shootTimer:FlxTimer;
-	public var starBackdrops:FlxSpriteGroup;
-	public var currentTime:Float = 0;
-	public var lastWholeSecond:Int = 0;
-	public var currentWholeSecond:Int = 0;
-
+	/**
+	 * Instance of PlayState, used for global access
+	 */
 	public static var instance:PlayState = null;
 
-	override public function create()
+	public function new()
 	{
-		instance = this;
+		super();
 
+		instance = this;
+	}
+
+	/**
+	 * Player object
+	 */
+	public var player:Player;
+
+	/**
+	 * Enemy objects, by Array
+	 */
+	public var enemies:Array<Enemy> = [];
+
+	/**
+	 * JSON wave file path
+	 */
+	public var jsonPath:String = "waves/wave1.json";
+
+	/**
+	 * Default should 1, as a wave number
+	 */
+	public var waveNum:Int = 1;
+
+	/**
+	 * Default should 1, as a level number
+	 */
+	public var levelNum:Int = 1;
+
+	/**
+	 * World number, as default is should 1
+	 */
+	public var worldNum:Int = 1;
+
+	/**
+	 * Scripted object for scripted events
+	 */
+	public var scriptedArray:Array<Scripted>;
+
+	override function create()
+	{
 		super.create();
 
-		starBackdrops = new FlxSpriteGroup();
-		for (i in 0...3)
-		{
-			var stardrop = new FlxBackdrop();
-			stardrop.loadGraphic(Paths.images("stars"));
-			switch (i)
-			{
-				case 0:
-					stardrop.velocity.x = -10;
-					stardrop.scale.set(0.5, 0.5);
-				case 1:
-					stardrop.velocity.x = -30;
-					stardrop.scale.set(0.7, 0.7);
-				case 2:
-					stardrop.velocity.x = -60;
-			}
-			stardrop.updateHitbox();
-			stardrop.setPosition(0, 0);
-			starBackdrops.add(stardrop);
-		}
-		add(starBackdrops);
+		setupPlayer();
 
+		// how enemy goes will by the json
+		setupEnemy(jsonPath);
+
+		// load scripts as same as the wave name, for default scripts loading
+		setupScripts(Paths.data('world${worldNum}/level${levelNum}/wave${waveNum}'));
+	}
+
+	/**
+	 * Tween all of the enemies from the JSON file
+	 */
+	function setupEnemy(file:String = "waves/wave1.json")
+	{
+		// addEnemy();
+		trace("Loading enemies from: " + file);
+		var jsonData = Json.parse(File.getContent(file));
+		if (jsonData == null)
+		{
+			trace("Error: Could not parse JSON data from " + file);
+			return;
+		}
+		var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
+		for (enemyData in enemiesArray)
+		{
+			var startFrom:EnemyStartForm = switch (enemyData.startFrom)
+			{
+				case "LEFT": LEFT;
+				case "RIGHT": RIGHT;
+				case "TOP": TOP;
+				case "BOTTOM": BOTTOM;
+				default: LEFT; // Default to LEFT if not specified
+			};
+			var x:Float = enemyData.x != null ? enemyData.x : 0;
+			var y:Float = enemyData.y != null ? enemyData.y : 0;
+
+			addEnemy(startFrom, x, y);
+		}
+	}
+
+	/**
+	 * Setup the player to start the funni game
+	 */
+	function setupPlayer()
+	{
 		player = new Player(-500, 0);
 		player.allowBound = player.allowMove = false;
 		player.screenCenter(Y);
 		add(player);
 
-		playerEmttier = new FlxSprite(player.x + player.width / 2, player.y + player.height / 2);
-		playerEmttier.loadGraphic(Paths.images('emttier_bullet'), true, 32, 32);
-		playerEmttier.animation.add("idle", [0]);
-		playerEmttier.animation.add("fire", [0, 1, 2, 3], 10, false);
-		playerEmttier.animation.play("idle");
-		playerEmttier.alpha = 0;
-		playerEmttier.screenCenter(Y);
-		add(playerEmttier);
-
-		FlxTween.tween(player, {x: 50}, 0.5, {
-			ease: FlxEase.sineInOut,
+		FlxTween.tween(player, {x: 50}, 1, {
+			ease: FlxEase.quadOut,
 			onComplete: function(tween:FlxTween)
 			{
-				player.allowBound = player.allowMove = true;
+				player.allowMove = true;
+				player.allowBound = true;
 			}
 		});
-
-		shootTimer = new FlxTimer();
-		shootTimer.finished = true;
-
-		// levelScript = new Scripted(Paths.data('world1/level1'));
-		// levelScript.call('create', []);
 	}
 
-	public function addEnemy(id:Int, x:Float, y:Float, ?doTween:Bool = false, ?tweenX:Float = 0, ?tweenY:Float = 0):Enemy
+	/**
+	 * Setup a scripts file, this will be used for scripted events
+	 * @param file File path of the script file, should be a Haxe-like script with `.hxc` at the end
+	 */
+	public function setupScripts(file:String)
 	{
-		var enemy = new Enemy(x, y);
-		add(enemy);
-		if (doTween)
+		if (!sys.FileSystem.exists(file))
 		{
-			FlxTween.tween(enemy, {x: tweenX, y: tweenY}, 0.5, {ease: FlxEase.sineInOut});
+			trace('Script file not found: $file');
+			return;
 		}
+		var newScripted = new Scripted(file);
+		newScripted.call("create", []);
+		scriptedArray.push(newScripted);
+	}
+
+	/**
+	 * Add an enemy to a game, is will also passed into the enemies Array
+	 * @param startFrom The position will on what side of the screen the enemy will start
+	 * @param x The tween X position
+	 * @param y The tween Y position
+	 * @param id Um, idk?
+	 * @return Enemy object, or null if the enemy already exists
+	 */
+	public function addEnemy(startFrom:EnemyStartForm, x:Float = 0, y:Float = 0, ?id:Int = 0)
+	{
+		var enemy:Enemy = new Enemy(700, 0);
+		switch (startFrom)
+		{
+			case LEFT: // left side
+				enemy.setPosition(700, 0);
+			case RIGHT: // right side
+				enemy.setPosition(-100, 0);
+			case TOP: // top side
+				enemy.setPosition(0, 700);
+			case BOTTOM: // bottom side
+				enemy.setPosition(0, -100);
+		}
+		add(enemy);
+
+		FlxTween.tween(enemy, {
+			x: x,
+			y: y
+		}, 1, {
+			ease: FlxEase.linear
+		});
 
 		var exists = false;
 		for (e in enemies)
@@ -114,6 +193,11 @@ class PlayState extends FlxState
 		return enemy;
 	}
 
+	/**
+	 * Get an enemy by index number of Array
+	 * @param num number index of enemy, is should be exists
+	 * @return Enemy
+	 */
 	public function getEnemy(num:Int):Enemy
 	{
 		if (num < 0 || num >= enemies.length)
@@ -123,85 +207,8 @@ class PlayState extends FlxState
 		return enemies[num];
 	}
 
-	override public function update(elapsed:Float)
+	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if (FlxG.keys.justPressed.ESCAPE)
-		{
-			FlxG.switchState(() -> new CreateLevelState());
-		}
-
-		currentTime += elapsed;
-		currentWholeSecond = Std.int(currentTime);
-		if (currentWholeSecond > lastWholeSecond)
-		{
-			FlxG.watch.addQuick("currentWholeSecond", currentWholeSecond);
-			lastWholeSecond = currentWholeSecond;
-		}
-
-		player.update(elapsed);
-		// levelScript.call('update', [elapsed]);
-		playerEmttier.setPosition((player.x + player.width / 2 - 4) + 20, (player.y + player.height / 2 - 4) - 12);
-
-		if (player.allowMove && FlxG.keys.pressed.Z && shootTimer.finished)
-		{
-			shoot();
-			shootTimer.start(0.1);
-		}
-
-		for (bullet in bullets)
-		{
-			if (bullet.x > FlxG.width || bullet.x + bullet.width < 0 || bullet.y > FlxG.height || bullet.y + bullet.height < 0)
-			{
-				remove(bullet);
-				bullets.remove(bullet);
-				bullet.destroy();
-				if (bullets.length == 0)
-				{
-					playerEmttier.animation.play("fire");
-					playerEmttier.animation.onFinish.add(function(animation:String)
-					{
-						switch (animation)
-						{
-							case "fire":
-								playerEmttier.alpha = 0;
-								playerEmttier.animation.play("idle");
-						}
-					});
-				}
-				break;
-			}
-
-			for (enemy in enemies)
-			{
-				if (bullet.overlaps(enemy))
-				{
-					remove(enemy);
-					enemies.remove(enemy);
-					enemy.destroy();
-
-					remove(bullet);
-					bullets.remove(bullet);
-					bullet.destroy();
-					break;
-				}
-			}
-		}
-	}
-
-	function shoot()
-	{
-		playerEmttier.alpha = 1;
-		playerEmttier.animation.play("idle", true);
-
-		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
-		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
-		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
-		bullet.animation.play("fire");
-		bullet.velocity.x = 600;
-		add(bullet);
-
-		bullets.push(bullet);
 	}
 }
