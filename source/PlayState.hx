@@ -188,21 +188,28 @@ class PlayState extends FlxState
 	 */
 	function setupEnemy(file:String = "world1/level1/waves/wave1.json")
 	{
-		trace("Loading enemies from: " + Paths.data(file));
-		var jsonData = Json.parse(File.getContent(Paths.data(file)));
-		if (jsonData == null)
+		try
 		{
-			trace("Error: Could not parse JSON data from " + file);
-			return;
-		}
-		var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
-		for (enemyData in enemiesArray)
-		{
-			var startFrom:EnemyStartForm = LEFT;
-			var x:Float = enemyData.x != null ? enemyData.x : 0;
-			var y:Float = enemyData.y != null ? enemyData.y : 0;
+			trace("Loading enemies from: " + Paths.data(file));
+			var jsonData = Json.parse(File.getContent(Paths.data(file)));
+			if (jsonData == null)
+			{
+				trace("Error: Could not parse JSON data from " + file);
+				return;
+			}
+			var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
+			for (enemyData in enemiesArray)
+			{
+				var startFrom:EnemyStartForm = LEFT;
+				var x:Float = enemyData.x != null ? enemyData.x : 0;
+				var y:Float = enemyData.y != null ? enemyData.y : 0;
 
-			addEnemy(startFrom, x, y);
+				addEnemy(startFrom, x, y);
+			}
+		}
+		catch (e:Dynamic)
+		{
+			trace("Error loading file: " + Paths.data(file) + "\nLog: " + Std.string(e));
 		}
 	}
 
