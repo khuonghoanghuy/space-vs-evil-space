@@ -2,9 +2,13 @@ package;
 
 import Enemy.EnemyStartForm;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.display.FlxBackdrop;
+import flixel.group.FlxSpriteGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
 import haxe.Json;
 import sys.io.File;
 
@@ -26,9 +30,24 @@ class PlayState extends FlxState
 	}
 
 	/**
+	 * Backdrop of the star for the BG objects
+	 */
+	public var starBackdrops:FlxSpriteGroup;
+
+	/**
 	 * Player object
 	 */
 	public var player:Player;
+
+	/**
+	 * Bullet objects when player shoot
+	 */
+	public var bullets:Array<FlxSprite> = [];
+
+	/**
+	 * Handle shot time
+	 */
+	public var shootTimer:FlxTimer;
 
 	/**
 	 * Enemy objects, by Array
@@ -38,7 +57,7 @@ class PlayState extends FlxState
 	/**
 	 * JSON wave file path
 	 */
-	public var jsonPath:String = "waves/wave1.json";
+	public var jsonPath:String = "world1/level1/waves/wave1.json";
 
 	/**
 	 * Default should 1, as a wave number
@@ -64,6 +83,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+		setupStarBackdrop();
+
 		setupPlayer();
 
 		// how enemy goes will by the json
@@ -71,12 +92,43 @@ class PlayState extends FlxState
 
 		// load scripts as same as the wave name, for default scripts loading
 		setupScripts(Paths.data('world${worldNum}/level${levelNum}/wave${waveNum}'));
+
+		shootTimer = new FlxTimer();
+		shootTimer.finished = true;
+	}
+
+	/**
+	 * Create 3 star for the BG
+	 */
+	function setupStarBackdrop()
+	{
+		starBackdrops = new FlxSpriteGroup();
+		for (i in 0...3)
+		{
+			var stardrop = new FlxBackdrop();
+			stardrop.loadGraphic(Paths.images("stars"));
+			switch (i)
+			{
+				case 0:
+					stardrop.velocity.x = -10;
+					stardrop.scale.set(0.5, 0.5);
+				case 1:
+					stardrop.velocity.x = -30;
+					stardrop.scale.set(0.7, 0.7);
+				case 2:
+					stardrop.velocity.x = -60;
+			}
+			stardrop.updateHitbox();
+			stardrop.setPosition(0, 0);
+			starBackdrops.add(stardrop);
+		}
+		add(starBackdrops);
 	}
 
 	/**
 	 * Tween all of the enemies from the JSON file
 	 */
-	function setupEnemy(file:String = "waves/wave1.json")
+	function setupEnemy(file:String = "world1/level1/waves/wave1.json")
 	{
 		trace("Loading enemies from: " + Paths.data(file));
 		var jsonData = Json.parse(File.getContent(Paths.data(file)));
@@ -156,6 +208,7 @@ class PlayState extends FlxState
 				enemy.setPosition(0, -100);
 		}
 		add(enemy);
+		enemies.push(enemy);
 
 		FlxTween.tween(enemy, {
 			x: x,
@@ -188,5 +241,58 @@ class PlayState extends FlxState
 		{
 			FlxG.switchState(() -> new CreateLevelState());
 		}
+
+		if (player.allowMove && FlxG.keys.pressed.Z && shootTimer.finished)
+		{
+			shoot();
+			shootTimer.start(0.1);
+		}
+
+		/**
+		 * Handle shot functions
+		 * 
+		 * Include the overlaps of the enemies and when bullet passing out of the screen
+		 */
+		for (bullet in bullets)
+		{
+			if (bullet.x > FlxG.width || bullet.x + bullet.width < 0 || bullet.y > FlxG.height || bullet.y + bullet.height < 0)
+			{
+				remove(bullet);
+				bullets.remove(bullet);
+				bullet.destroy();
+				break;
+			}
+
+			for (enemy in enemies)
+			{
+				if (bullet.overlaps(enemy))
+				{
+					remove(enemy);
+					enemies.remove(enemy);
+					enemy.destroy();
+
+					remove(bullet);
+					bullets.remove(bullet);
+					bullet.destroy();
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create a bullet and then let it shoot into front of the player ship
+	 * @return After create bullet, is will push that bullet into `bullets` Array
+	 */
+	public function shoot()
+	{
+		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
+		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
+		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
+		bullet.animation.play("fire");
+		bullet.velocity.x = 600;
+		add(bullet);
+
+		bullets.push(bullet);
 	}
 }

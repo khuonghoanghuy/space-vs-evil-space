@@ -1,7 +1,7 @@
 - [X] Done player space sprites
 - [X] Done added save data game
 - [X] Added Modding system (as replaced assets)
-- [ ] Done level wave system using .json
+- [X] Done level wave system using .json
 - [ ] Done Menu ui sprites
 - [X] Done shooting system
 - [ ] Done effect when hit enemy
