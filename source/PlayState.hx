@@ -1,6 +1,7 @@
 package;
 
 import Enemy.EnemyStartForm;
+import flixel.FlxG;
 import flixel.FlxState;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -77,9 +78,8 @@ class PlayState extends FlxState
 	 */
 	function setupEnemy(file:String = "waves/wave1.json")
 	{
-		// addEnemy();
-		trace("Loading enemies from: " + file);
-		var jsonData = Json.parse(File.getContent(file));
+		trace("Loading enemies from: " + Paths.data(file));
+		var jsonData = Json.parse(File.getContent(Paths.data(file)));
 		if (jsonData == null)
 		{
 			trace("Error: Could not parse JSON data from " + file);
@@ -88,14 +88,8 @@ class PlayState extends FlxState
 		var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
 		for (enemyData in enemiesArray)
 		{
-			var startFrom:EnemyStartForm = switch (enemyData.startFrom)
-			{
-				case "LEFT": LEFT;
-				case "RIGHT": RIGHT;
-				case "TOP": TOP;
-				case "BOTTOM": BOTTOM;
-				default: LEFT; // Default to LEFT if not specified
-			};
+			// Default to LEFT since CreateLevelState doesn't save startFrom
+			var startFrom:EnemyStartForm = LEFT;
 			var x:Float = enemyData.x != null ? enemyData.x : 0;
 			var y:Float = enemyData.y != null ? enemyData.y : 0;
 
@@ -169,27 +163,6 @@ class PlayState extends FlxState
 		}, 1, {
 			ease: FlxEase.linear
 		});
-
-		var exists = false;
-		for (e in enemies)
-		{
-			if (e.ID == id)
-			{
-				exists = true;
-				break;
-			}
-		}
-		if (!exists)
-		{
-			enemy.ID = id;
-			enemies.push(enemy);
-		}
-		else
-		{
-			remove(enemy);
-			enemy.destroy();
-			return null;
-		}
 		return enemy;
 	}
 
@@ -210,5 +183,10 @@ class PlayState extends FlxState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.ESCAPE)
+		{
+			FlxG.switchState(() -> new CreateLevelState());
+		}
 	}
 }

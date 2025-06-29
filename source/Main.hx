@@ -14,6 +14,6 @@ class Main extends Sprite
 		GameData.initSaveData();
 
 		FlxG.stage.quality = LOW; // Pixel Perfect ig?
-		addChild(new FlxGame(0, 0, PlayState));
+		addChild(new FlxGame(0, 0, #if LEVELSTATE CreateLevelState #else PlayState #end));
 	}
 }
