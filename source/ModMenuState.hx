@@ -6,6 +6,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.system.FlxModding;
 import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Json;
 import sys.io.File;
@@ -15,6 +16,8 @@ class ModMenuState extends FlxState
 	var listModsGroup:FlxTypedGroup<FlxText>;
 	var listModsArray:Array<String> = [];
 	var currentSelected:Int = 0;
+
+	var createNewModsButton:FlxButton;
 
 	override function create()
 	{
@@ -35,6 +38,18 @@ class ModMenuState extends FlxState
 		}
 
 		changeSelected();
+		setupUI();
+
+		FlxModding.reload();
+	}
+
+	function setupUI()
+	{
+		createNewModsButton = new FlxButton(20, FlxG.height - 50, "Create new mods", function()
+		{
+			openSubState(new CreateNewModSubState());
+		});
+		add(createNewModsButton);
 	}
 
 	override function update(elapsed:Float)
@@ -75,7 +90,7 @@ class ModMenuState extends FlxState
 			active: mod.active,
 			priority: mod.priority
 		};
-		File.saveContent(metaPath, Json.stringify(meta, null, "    "));
+		File.saveContent(metaPath, Json.stringify(meta, "\t"));
 	}
 
 	function changeSelected(change:Int = 0)

@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.system.FlxModding;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
@@ -16,6 +17,8 @@ class MenuState extends FlxState
 	override function create()
 	{
 		super.create();
+
+		FlxModding.reload();
 
 		listGroup = new FlxTypedGroup<FlxText>();
 		add(listGroup);
