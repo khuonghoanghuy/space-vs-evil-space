@@ -16,7 +16,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import haxe.Json;
 import sys.io.File;
-import tjson.TJSON;
 
 using StringTools;
 
