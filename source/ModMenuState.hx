@@ -45,7 +45,7 @@ class ModMenuState extends FlxState
 
 	function setupUI()
 	{
-		createNewModsButton = new FlxButton(20, FlxG.height - 50, "Create new mods", function()
+		createNewModsButton = new FlxButton(20, FlxG.height - 50, "Create mods", function()
 		{
 			openSubState(new CreateNewModSubState());
 		});

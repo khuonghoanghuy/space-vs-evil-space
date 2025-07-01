@@ -68,7 +68,7 @@ class CreateNewModSubState extends FlxSubState
 			name: inputText.text,
 			author: "Unknow",
 			description: "",
-			active: false,
+			active: true,
 			priority: 1
 		};
 		File.saveContent(metaPath, Json.stringify(meta, "\t"));
