@@ -2,26 +2,70 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 
 class MenuState extends FlxState
 {
+	var listGroup:FlxTypedGroup<FlxText>;
+	var listArray:Array<String> = ["Play", "Mods", "Setting", "Exit"];
+	var currentSelected:Int = 0;
+
 	override function create()
 	{
 		super.create();
+
+		listGroup = new FlxTypedGroup<FlxText>();
+		add(listGroup);
+
+		for (i in 0...listArray.length)
+		{
+			var text:FlxText = new FlxText(20, (i * 44) + 20, 0, listArray[i], 24);
+			text.ID = i;
+			text.setBorderStyle(OUTLINE, FlxColor.BLACK, 1, 1);
+			listGroup.add(text);
+		}
+
+		changeSelected();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ONE)
-		{
-			FlxG.switchState(() -> new ModMenuState());
-		}
+		if (FlxG.keys.anyJustPressed([UP, W]) || FlxG.keys.anyJustPressed([DOWN, S]))
+			changeSelected((FlxG.keys.anyJustPressed([UP, W])) ? -1 : 1);
 
-		if (FlxG.keys.justPressed.TWO)
+		if (FlxG.keys.justPressed.ENTER)
 		{
-			FlxG.switchState(() -> new PlayState());
+			switch (listArray[currentSelected].toLowerCase())
+			{
+				case "play":
+					FlxG.switchState(() -> new PlayState());
+				case "mods":
+					FlxG.switchState(() -> new ModMenuState());
+				case "exit":
+					Sys.exit(0);
+			}
+		}
+	}
+
+	function changeSelected(change:Int = 0)
+	{
+		currentSelected = FlxMath.wrap(currentSelected + change, 0, listArray.length - 1);
+
+		for (text in listGroup)
+		{
+			if (text.ID == currentSelected)
+			{
+				text.color = FlxColor.YELLOW;
+			}
+			else
+			{
+				text.color = FlxColor.WHITE;
+			}
 		}
 	}
 }

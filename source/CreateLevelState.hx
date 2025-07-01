@@ -53,33 +53,12 @@ class CreateLevelState extends FlxState
 		add(nameLevelInput);
 		nameLevelInput.visible = false;
 
-		saveButton = new FlxButton(FlxG.width - 100, FlxG.height - 50, "Save", saveFunction);
-		saveButton.loadGraphic(Paths.images("button"), true, 80, 20);
-		saveButton.animation.add("idle", [0]);
-		saveButton.animation.add("hover", [1]);
-		saveButton.animation.add("pressed", [2, 3, 0]);
-		saveButton.animation.play("idle");
-		saveButton.scrollFactor.set(0, 0);
-		add(saveButton);
-		saveButton.visible = false;
-
 		saveButton = new FlxButton(FlxG.width - 180, FlxG.height - 50, "Save", saveFunction);
-		saveButton.loadGraphic(Paths.images("button"), true, 80, 20);
-		saveButton.animation.add("idle", [0]);
-		saveButton.animation.add("hover", [1]);
-		saveButton.animation.add("pressed", [2, 3, 0]);
-		saveButton.animation.play("idle");
 		saveButton.scrollFactor.set(0, 0);
 		add(saveButton);
 		saveButton.visible = false;
 
 		openButton = new FlxButton(FlxG.width - 90, FlxG.height - 50, "Open", openFunction);
-		openButton.loadGraphic(Paths.images("button"), true, 80, 20);
-		openButton.animation.add("idle", [0]);
-		openButton.animation.add("hover", [1]);
-		openButton.animation.add("pressed", [2, 3, 0]);
-		openButton.animation.play("idle");
-		openButton.scrollFactor.set(0, 0);
 		add(openButton);
 		openButton.visible = false;
 	}
@@ -88,26 +67,32 @@ class CreateLevelState extends FlxState
 	{
 		super.update(elapsed);
 
-		if (FlxG.mouse.justPressed && !allowType)
+		if (FlxG.mouse.justPressed)
 		{
-			addEnemy(FlxG.mouse.viewX, FlxG.mouse.viewY);
-		}
-		if (FlxG.mouse.justPressedRight && !allowType)
-		{
-			removeEnemy(FlxG.mouse.viewX, FlxG.mouse.viewY);
+			if (!allowType)
+			{
+				var gridX = Math.floor(FlxG.mouse.viewX / 32) * 32;
+				var gridY = Math.floor(FlxG.mouse.viewY / 32) * 32;
+				var foundEnemy:Enemy = null;
+				for (enemy in enemies)
+				{
+					if (enemy.x == gridX && enemy.y == gridY)
+						foundEnemy = enemy;
+				}
+				if (foundEnemy != null)
+				{
+					removeEnemy(FlxG.mouse.viewX, FlxG.mouse.viewY);
+				}
+				else
+				{
+					addEnemy(FlxG.mouse.viewX, FlxG.mouse.viewY);
+				}
+			}
 		}
 
 		if (FlxG.keys.justPressed.TAB)
 			allowType = !allowType;
 		nameLevelInput.visible = saveButton.visible = openButton.visible = allowType;
-		if (FlxG.mouse.overlaps(saveButton))
-		{
-			saveButton.animation.play("hover");
-			if (FlxG.mouse.justPressed)
-			{
-				saveButton.animation.play("pressed");
-			}
-		}
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{

@@ -7,7 +7,6 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxMath;
 import flixel.system.FlxModding;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -15,7 +14,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import haxe.Json;
-import sys.io.File;
 
 using StringTools;
 

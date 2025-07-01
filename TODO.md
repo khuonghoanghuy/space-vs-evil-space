@@ -16,3 +16,4 @@
     - [X] Remove Enemy
     - [ ] Select Enemy, config how they should do
     - [ ] Allow to select other type of the Enemy
+- [X] Fix game cannot get the assets button from `flixel` library
