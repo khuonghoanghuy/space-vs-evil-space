@@ -31,11 +31,11 @@ class Enemy extends FlxSprite
 		switch (type)
 		{
 			case NORMAL, SHOOTER:
-				health = 100;
+				health = 25;
 			case FAST_MOVE:
-				health = 50;
+				health = 10;
 			case LASER_SHOOTER:
-				health = 150;
+				health = 40;
 		}
 
 		makeGraphic(32, 32, 0xFFFF0000);

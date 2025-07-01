@@ -1,16 +1,9 @@
 package;
 
-import flixel.FlxG;
-import flixel.system.FlxModding;
 import flixel.system.frontEnds.AssetFrontEnd.FlxAssetType;
 
 class Paths
 {
-	/**
-	 * Use for CreateLevelState, that state cannot using anything related to FlxModding :sob:
-	 */
-	public static var isCreateLevelState:Bool = false;
-
 	inline public static function file(name:String, type:FlxAssetType, useCache:Bool = true)
 	{
 		return '$name';

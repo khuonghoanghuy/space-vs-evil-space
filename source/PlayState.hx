@@ -7,6 +7,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxMath;
 import flixel.system.FlxModding;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;

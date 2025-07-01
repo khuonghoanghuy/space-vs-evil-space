@@ -19,16 +19,8 @@ class CreateLevelState extends FlxState
 	var saveButton:FlxButton;
 	var openButton:FlxButton;
 
-	public function new()
+	function createGridLine()
 	{
-		super();
-		Paths.isCreateLevelState = true;
-	}
-
-	override public function create()
-	{
-		super.create();
-
 		gridLine = new FlxSprite();
 		var gfx = gridLine.makeGraphic(FlxG.width, FlxG.height, 0x00000000, true);
 		for (x in 0...Std.int(FlxG.width / 32) + 1)
@@ -42,6 +34,13 @@ class CreateLevelState extends FlxState
 		gridLine.pixels = gfx.pixels;
 		gridLine.dirty = true;
 		add(gridLine);
+	}
+
+	override public function create()
+	{
+		super.create();
+
+		createGridLine();
 
 		player = new Player(50, 0);
 		player.allowMove = false;
@@ -112,7 +111,6 @@ class CreateLevelState extends FlxState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			Paths.isCreateLevelState = false;
 			FlxG.switchState(() -> new PlayState());
 		}
 
