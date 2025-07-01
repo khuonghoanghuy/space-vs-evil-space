@@ -24,6 +24,11 @@
       "name": "throwingshade",
       "type": "haxelib",
       "version": "0.0.1"
+    },
+    {
+      "name": "tjson",
+      "type": "haxelib",
+      "version": "1.4.0"
     }
   ]
 }

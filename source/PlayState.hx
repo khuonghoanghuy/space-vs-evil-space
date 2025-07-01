@@ -7,6 +7,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxModding;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -14,6 +15,9 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import haxe.Json;
 import sys.io.File;
+import tjson.TJSON;
+
+using StringTools;
 
 /**
  * Contains Game Data, Gameplay and such, an important class for the game
@@ -91,10 +95,10 @@ class PlayState extends FlxState
 		setupPlayer();
 
 		// how enemy goes will by the json
-		setupEnemy(jsonPath);
+		setupEnemy();
 
 		// load scripts as same as the wave name, for default scripts loading
-		setupScripts(Paths.data('world${worldNum}/level${levelNum}/wave${waveNum}'));
+		// setupScripts(Paths.data('world${worldNum}/level${levelNum}/waves/wave${waveNum}'));
 
 		shootTimer = new FlxTimer();
 		shootTimer.finished = true;
@@ -190,13 +194,9 @@ class PlayState extends FlxState
 	{
 		try
 		{
-			trace("Loading enemies from: " + Paths.data(file));
-			var jsonData = Json.parse(File.getContent(Paths.data(file)));
-			if (jsonData == null)
-			{
-				trace("Error: Could not parse JSON data from " + file);
-				return;
-			}
+			var jsonData:Dynamic = Json.parse(FlxModding.system.getAsset(Paths.data(file), TEXT, true));
+			jsonPath = file;
+
 			var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
 			for (enemyData in enemiesArray)
 			{
@@ -209,7 +209,8 @@ class PlayState extends FlxState
 		}
 		catch (e:Dynamic)
 		{
-			trace("Error loading file: " + Paths.data(file) + "\nLog: " + Std.string(e));
+			trace("Error loading enemy data: " + Std.string(e));
+			FlxG.log.error("Error loading enemy data: " + Std.string(e));
 		}
 	}
 
@@ -231,22 +232,6 @@ class PlayState extends FlxState
 				player.allowBound = true;
 			}
 		});
-	}
-
-	/**
-	 * Setup a scripts file, this will be used for scripted events
-	 * @param file File path of the script file, should be a Haxe-like script with `.hxc` at the end
-	 */
-	public function setupScripts(file:String)
-	{
-		if (!sys.FileSystem.exists(file))
-		{
-			trace('Script file not found: $file');
-			return;
-		}
-		var newScripted = new Scripted(file);
-		newScripted.call("create", []);
-		scriptedArray.push(newScripted);
 	}
 
 	/**

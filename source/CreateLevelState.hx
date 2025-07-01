@@ -19,6 +19,12 @@ class CreateLevelState extends FlxState
 	var saveButton:FlxButton;
 	var openButton:FlxButton;
 
+	public function new()
+	{
+		super();
+		Paths.isCreateLevelState = true;
+	}
+
 	override public function create()
 	{
 		super.create();
@@ -106,6 +112,7 @@ class CreateLevelState extends FlxState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
+			Paths.isCreateLevelState = false;
 			FlxG.switchState(() -> new PlayState());
 		}
 
