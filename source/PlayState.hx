@@ -1,6 +1,7 @@
 package;
 
 import Enemy.EnemyStartForm;
+import Enemy.EnemyType;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -200,11 +201,12 @@ class PlayState extends FlxState
 			var enemiesArray:Array<Dynamic> = cast jsonData.enemies;
 			for (enemyData in enemiesArray)
 			{
-				var startFrom:EnemyStartForm = LEFT;
+				var startFrom:EnemyStartForm = Type.createEnum(EnemyStartForm, enemyData.startFrom);
+				var type:EnemyType = Type.createEnum(EnemyType, enemyData.type);
 				var x:Float = enemyData.x != null ? enemyData.x : 0;
 				var y:Float = enemyData.y != null ? enemyData.y : 0;
 
-				addEnemy(startFrom, x, y);
+				addEnemy(startFrom, type, x, y);
 			}
 		}
 		catch (e:Dynamic)
@@ -242,22 +244,26 @@ class PlayState extends FlxState
 	 * @param id Um, idk?
 	 * @return Enemy object, or null if the enemy already exists
 	 */
-	public function addEnemy(startFrom:EnemyStartForm, x:Float = 0, y:Float = 0, ?id:Int = 0)
+	public function addEnemy(startFrom:EnemyStartForm, type:EnemyType, x:Float = 0, y:Float = 0, ?id:Int = 0)
 	{
-		var enemy:Enemy = new Enemy(700, 0);
+		var enemy:Enemy = new Enemy(0, 0, type, startFrom);
+		var centerY = (FlxG.height - enemy.height) / 2;
+		var centerX = (FlxG.width - enemy.width) / 2;
 		switch (startFrom)
 		{
 			case LEFT: // left side
-				enemy.setPosition(700, 0);
+				enemy.setPosition(-100, centerY);
 			case RIGHT: // right side
-				enemy.setPosition(-100, 0);
+				enemy.setPosition(FlxG.width + 100, centerY);
 			case TOP: // top side
-				enemy.setPosition(0, 700);
+				enemy.setPosition(centerX, -100);
 			case BOTTOM: // bottom side
-				enemy.setPosition(0, -100);
+				enemy.setPosition(centerX, FlxG.height + 100);
 		}
 		add(enemy);
 		enemies.push(enemy);
+
+		trace(enemy.type + '' + enemy.startFrom);
 
 		FlxTween.tween(enemy, {
 			x: x,
@@ -317,13 +323,21 @@ class PlayState extends FlxState
 			{
 				if (bullet.overlaps(enemy))
 				{
-					enemy.health -= 15; // first bullet is so weak
+					enemy.health -= player.power; // first bullet is so weak
 					if (enemy.health <= 0)
 					{
 						FlxTween.tween(enemy, {x: enemy.x + 20, alpha: 0}, 0.15, {
 							ease: FlxEase.linear,
 							onComplete: function(tween:FlxTween)
 							{
+								switch (GameData.saveData.howScoreGet.toLowerCase())
+								{
+									case "normal":
+										updateScore(15);
+									case "random":
+										updateScore(FlxG.random.int(1, 15));
+								}
+
 								remove(enemy);
 								enemies.remove(enemy);
 								enemy.destroy();
@@ -344,14 +358,6 @@ class PlayState extends FlxState
 					remove(bullet);
 					bullets.remove(bullet);
 					bullet.destroy();
-
-					switch (GameData.saveData.howScoreGet.toLowerCase())
-					{
-						case "normal":
-							updateScore(15);
-						case "random":
-							updateScore(FlxG.random.int(1, 15));
-					}
 
 					break;
 				}

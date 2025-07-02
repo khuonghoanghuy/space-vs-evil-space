@@ -19,8 +19,8 @@
 - [X] Open Level
 - [X] Placing Enemy
 - [X] Remove Enemy
-- [ ] Select Enemy, config how they should do
-- [ ] Allow to select other type of the Enemy
+- [X] Select Enemy, config how they should do
+- [X] Allow to select other type of the Enemy
 
 ### Mods Menu
 - [X] List mods

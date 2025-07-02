@@ -5,6 +5,8 @@ import flixel.FlxG;
 @:structInit class SaveData
 {
 	public var howScoreGet:String = "Normal";
+	public var framerate:Int = 60;
+	public var allowSlowMove:Bool = true;
 }
 
 class GameData

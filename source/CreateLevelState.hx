@@ -19,6 +19,8 @@ class CreateLevelState extends FlxState
 	var saveButton:FlxButton;
 	var openButton:FlxButton;
 
+	var selectedEnemy:Enemy = null;
+
 	function createGridLine()
 	{
 		gridLine = new FlxSprite();
@@ -106,6 +108,20 @@ class CreateLevelState extends FlxState
 			if (FlxG.keys.justPressed.O)
 				openFunction();
 		}
+
+		if (FlxG.mouse.justPressedRight)
+		{
+			var gridX = Math.floor(FlxG.mouse.viewX / 32) * 32;
+			var gridY = Math.floor(FlxG.mouse.viewY / 32) * 32;
+			for (enemy in enemies)
+			{
+				if (enemy.x == gridX && enemy.y == gridY)
+				{
+					selectedEnemy = enemy;
+					openSubState(new EnemyConfigSubState(selectedEnemy));
+				}
+			}
+		}
 	}
 
 	// Save the level
@@ -118,6 +134,8 @@ class CreateLevelState extends FlxState
 				var gridY = Std.int(e.y / 32);
 				return {
 					id: 'enemy_${gridX}_${gridY}',
+					startFrom: Std.string(e.startFrom),
+					type: Std.string(e.type),
 					x: e.x,
 					y: e.y
 				};

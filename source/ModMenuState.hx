@@ -175,9 +175,17 @@ class ModMenuState extends FlxState
 				text.ID = modIndex;
 
 				if (modIndex == currentSelected)
-					changeSelectedExtract(text);
+				{
+					// Smooth color transition
+					var targetColor = mod.active ? FlxColor.LIME : FlxColor.RED;
+					FlxTween.cancelTweensOf(text);
+					FlxTween.color(text, 0.2, text.color, targetColor, {ease: FlxEase.sineInOut});
+				}
 				else
-					text.color = FlxColor.WHITE;
+				{
+					FlxTween.cancelTweensOf(text);
+					FlxTween.color(text, 0.2, text.color, FlxColor.WHITE, {ease: FlxEase.sineInOut});
+				}
 
 				text.visible = true;
 			}

@@ -16,6 +16,11 @@ class Player extends FlxSprite
 	 */
 	public var allowMove:Bool = true;
 
+	/**
+	 * The power of player
+	 */
+	public var power:Int = 5;
+
 	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
@@ -32,10 +37,10 @@ class Player extends FlxSprite
 
 		if (allowMove)
 		{
-			var speed = 100;
+			var speed = 150;
 			if (FlxG.keys.pressed.SHIFT)
 			{
-				speed = 50;
+				speed = 75;
 			}
 
 			if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT)
