@@ -53,6 +53,9 @@ class MenuState extends FlxState
 					Sys.exit(0);
 			}
 		}
+
+		if (FlxG.keys.justPressed.SEVEN)
+			FlxG.switchState(() -> new CreateLevelState());
 	}
 
 	function changeSelected(change:Int = 0)

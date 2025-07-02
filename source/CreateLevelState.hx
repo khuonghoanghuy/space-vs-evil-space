@@ -96,12 +96,15 @@ class CreateLevelState extends FlxState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.switchState(() -> new PlayState());
+			FlxG.switchState(() -> new MenuState());
 		}
 
-		if (FlxG.keys.justPressed.CONTROL && FlxG.keys.justPressed.S)
+		if (FlxG.keys.pressed.CONTROL)
 		{
-			saveFunction();
+			if (FlxG.keys.justPressed.S)
+				saveFunction();
+			if (FlxG.keys.justPressed.O)
+				openFunction();
 		}
 	}
 
