@@ -1,4 +1,4 @@
-## Completed Tasks
+## TODO List
 
 - [X] Player space sprites
 - [X] Added save data game
@@ -9,12 +9,18 @@
 - [X] Bullet fire emitter (as sprites)
 - [X] Fix game cannot get the assets button from `flixel` library
 - [X] Pause sub state
+- [ ] Menu UI sprites
+- [ ] Effect when hit enemy
+- [ ] Effect when player bullet hit enemy
+- [ ] Gameplay UI
 
 ### Level System State (Completed)
     - [X] Save Level
     - [X] Open Level
     - [X] Placing Enemy
     - [X] Remove Enemy
+    - [ ] Select Enemy, config how they should do
+    - [ ] Allow to select other type of the Enemy
 
 ### Mods Menu (Completed)
     - [X] List mods
@@ -24,18 +30,10 @@
     - [X] Help keybind sub class
     - [X] Added HUD
     - [X] View other info about the current selected mods
-
----
-
-## In Progress / To Do
-
-- [ ] Menu UI sprites
-- [ ] Effect when hit enemy
-- [ ] Effect when player bullet hit enemy
-- [ ] Gameplay UI
-
-### Level System State (To Do)
-    - [ ] Select Enemy, config how they should do
-    - [ ] Allow to select other type of the Enemy
-
-### Mods Menu (To Do)
+    - [X] Added Bool check
+    - [X] Added change int
+    - [ ] Done bool check sprites
+    - [ ] Added options:
+        - [ ] How score get
+        - [ ] Allow slow move
+        - [ ] Framerate (capped from 30 to 120)

@@ -49,6 +49,8 @@ class MenuState extends FlxState
 					FlxG.switchState(() -> new PlayState());
 				case "mods":
 					FlxG.switchState(() -> new ModMenuState());
+				case "settings":
+					FlxG.switchState(() -> new OptionsState());
 				case "exit":
 					Sys.exit(0);
 			}
