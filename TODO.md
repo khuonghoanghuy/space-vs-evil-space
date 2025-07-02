@@ -15,25 +15,25 @@
 - [ ] Gameplay UI
 
 ### Level System State (Completed)
-    - [X] Save Level
-    - [X] Open Level
-    - [X] Placing Enemy
-    - [X] Remove Enemy
-    - [ ] Select Enemy, config how they should do
-    - [ ] Allow to select other type of the Enemy
+- [X] Save Level
+- [X] Open Level
+- [X] Placing Enemy
+- [X] Remove Enemy
+- [ ] Select Enemy, config how they should do
+- [ ] Allow to select other type of the Enemy
 
 ### Mods Menu (Completed)
-    - [X] List mods
-    - [X] Toggle mods
-    - [X] Create mods button
-    - [X] Reload mods button
-    - [X] Help keybind sub class
-    - [X] Added HUD
-    - [X] View other info about the current selected mods
-    - [X] Added Bool check
-    - [X] Added change int
-    - [ ] Done bool check sprites
-    - [ ] Added options:
-        - [ ] How score get
-        - [ ] Allow slow move
-        - [ ] Framerate (capped from 30 to 120)
+- [X] List mods
+- [X] Toggle mods
+- [X] Create mods button
+- [X] Reload mods button
+- [X] Help keybind sub class
+- [X] Added HUD
+- [X] View other info about the current selected mods
+- [X] Added Bool check
+- [X] Added change int
+- [ ] Done bool check sprites
+- [ ] Added options:
+    - [ ] How score get
+    - [ ] Allow slow move
+    - [ ] Framerate (capped from 30 to 120)
