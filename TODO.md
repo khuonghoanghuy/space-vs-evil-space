@@ -23,6 +23,7 @@
     - [X] Reload mods button
     - [X] Help keybind sub class
     - [X] Added HUD
+    - [X] View other info about the current selected mods
 
 ---
 
@@ -38,4 +39,3 @@
     - [ ] Allow to select other type of the Enemy
 
 ### Mods Menu (To Do)
-    - [ ] View other info about the current selected mods

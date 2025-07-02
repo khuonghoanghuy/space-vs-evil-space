@@ -7,6 +7,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.system.FlxModding;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import haxe.Json;
@@ -21,6 +23,8 @@ class ModMenuState extends FlxState
 	var createNewModsButton:FlxButton;
 	var reloadModsButton:FlxButton;
 	var hudUI:FlxSprite;
+	var rightSideUI:FlxSprite;
+	var infoText:FlxText;
 
 	override function create()
 	{
@@ -40,10 +44,10 @@ class ModMenuState extends FlxState
 			listModsGroup.add(text);
 		}
 
-		changeSelected();
 		setupUI();
 
 		FlxModding.reload();
+		changeSelected();
 	}
 
 	function setupUI()
@@ -64,6 +68,17 @@ class ModMenuState extends FlxState
 			FlxG.switchState(() -> new ModMenuState()); // since when loading this state, is actually reload the mods
 		});
 		add(reloadModsButton);
+
+		rightSideUI = new FlxSprite(FlxG.width + 300, 0);
+		rightSideUI.makeGraphic(300, FlxG.height, FlxColor.WHITE);
+		rightSideUI.alpha = 0.6;
+		add(rightSideUI);
+
+		infoText = new FlxText(rightSideUI.x + 20, 20, 0, "", 24);
+		infoText.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		infoText.alignment = LEFT;
+		infoText.autoSize = true;
+		add(infoText);
 	}
 
 	override function update(elapsed:Float)
@@ -95,6 +110,33 @@ class ModMenuState extends FlxState
 
 		if (FlxG.keys.justPressed.F1)
 			openSubState(new TextSubState("Press Up/Down to nagative\nPress ENTER to disable/enable mods", FlxColor.WHITE));
+		if (FlxG.keys.justPressed.Q)
+		{
+			var rightSideVisible = false;
+			rightSideVisible = !rightSideVisible;
+
+			FlxTween.cancelTweensOf(rightSideUI);
+			FlxTween.cancelTweensOf(infoText);
+
+			var targetX = rightSideVisible ? FlxG.width - 300 : FlxG.width + 300;
+			FlxTween.tween(rightSideUI, {x: targetX}, 0.5, {
+				ease: FlxEase.sineInOut,
+				onUpdate: function(tween:FlxTween)
+				{
+					infoText.x = rightSideUI.x + 20;
+				}
+			});
+		}
+	}
+
+	function returnModsInfo()
+	{
+		if (currentSelected >= 0 && currentSelected < FlxModding.mods.length)
+		{
+			var mod = FlxModding.mods[currentSelected];
+			return 'Author: ${mod.author}\nDesc: ${mod.description}\nPriority: ${mod.priority}';
+		}
+		return '';
 	}
 
 	function saveModMeta(mod:Dynamic):Void
@@ -114,6 +156,8 @@ class ModMenuState extends FlxState
 	function changeSelected(change:Int = 0)
 	{
 		currentSelected = FlxMath.wrap(currentSelected + change, 0, listModsArray.length - 1);
+		if (infoText != null)
+			infoText.text = returnModsInfo();
 
 		var maxVisible = Math.floor((FlxG.height - 100) / 88);
 		var start = GameMath.clamp(currentSelected - Std.int(maxVisible / 2), 0, FlxMath.maxInt(0, listModsArray.length - maxVisible));
