@@ -22,6 +22,11 @@ class PauseSubState extends FlxSubState
 
 		super.create();
 
+		var title = new FlxText(20, 20, 0, "Game Paused", 32);
+		title.scrollFactor.set();
+		title.setBorderStyle(OUTLINE, FlxColor.BLACK, 1, 1);
+		add(title);
+
 		listGroup = new FlxTypedGroup<FlxText>();
 		add(listGroup);
 
@@ -48,6 +53,7 @@ class PauseSubState extends FlxSubState
 			switch (listArray[currentSelected].toLowerCase())
 			{
 				case "resume":
+					persistentUpdate = true;
 					this.close();
 				case "restart":
 					this.close();

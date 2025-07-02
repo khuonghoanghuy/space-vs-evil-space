@@ -88,6 +88,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 
+		persistentDraw = persistentUpdate = true;
+
 		setupStarBackdrop();
 
 		setupPlayer();
@@ -286,6 +288,7 @@ class PlayState extends FlxState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
+			persistentUpdate = false;
 			openSubState(new PauseSubState());
 		}
 
