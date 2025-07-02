@@ -286,7 +286,7 @@ class PlayState extends FlxState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.switchState(() -> new CreateLevelState());
+			openSubState(new PauseSubState());
 		}
 
 		if (player.allowMove && FlxG.keys.pressed.Z && shootTimer.finished)

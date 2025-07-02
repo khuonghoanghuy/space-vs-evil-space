@@ -1,24 +1,26 @@
 package;
 
 import flixel.FlxG;
-import flixel.FlxState;
+import flixel.FlxSprite;
+import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.system.FlxModding;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
-class MenuState extends FlxState
+class PauseSubState extends FlxSubState
 {
 	var listGroup:FlxTypedGroup<FlxText>;
-	var listArray:Array<String> = ["Play", "Mods", "Setting", "Exit"];
+	var listArray:Array<String> = ["Resume", "Restart", "Return"];
 	var currentSelected:Int = 0;
 
 	override function create()
 	{
-		super.create();
+		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+		bg.alpha = 0.6;
+		add(bg);
 
-		FlxModding.reload();
+		super.create();
 
 		listGroup = new FlxTypedGroup<FlxText>();
 		add(listGroup);
@@ -45,12 +47,14 @@ class MenuState extends FlxState
 		{
 			switch (listArray[currentSelected].toLowerCase())
 			{
-				case "play":
-					FlxG.switchState(() -> new PlayState());
-				case "mods":
-					FlxG.switchState(() -> new ModMenuState());
-				case "exit":
-					Sys.exit(0);
+				case "resume":
+					this.close();
+				case "restart":
+					this.close();
+					FlxG.resetState();
+				case "return":
+					this.close();
+					FlxG.switchState(() -> new MenuState());
 			}
 		}
 	}
