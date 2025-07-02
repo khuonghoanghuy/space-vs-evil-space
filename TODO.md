@@ -30,6 +30,8 @@
 - [X] Help keybind sub class
 - [X] Added HUD
 - [X] View other info about the current selected mods
+
+### Options Menu
 - [X] Added Bool check
 - [X] Added change int
 - [ ] Done bool check sprites
