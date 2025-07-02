@@ -11,7 +11,7 @@ import flixel.util.FlxColor;
 class MenuState extends FlxState
 {
 	var listGroup:FlxTypedGroup<FlxText>;
-	var listArray:Array<String> = ["Play", "Mods", "Setting", "Exit"];
+	var listArray:Array<String> = ["Play", "Mods", "Credits", "Setting", "Exit"];
 	var currentSelected:Int = 0;
 
 	override function create()
@@ -49,6 +49,8 @@ class MenuState extends FlxState
 					FlxG.switchState(() -> new PlayState());
 				case "mods":
 					FlxG.switchState(() -> new ModMenuState());
+				case "credits":
+					FlxG.switchState(() -> new CreditsState());
 				case "setting":
 					FlxG.switchState(() -> new OptionsState());
 				case "exit":
