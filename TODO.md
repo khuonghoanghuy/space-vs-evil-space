@@ -14,7 +14,7 @@
 - [ ] Effect when player bullet hit enemy
 - [ ] Gameplay UI
 
-### Level System State (Completed)
+### Level System State
 - [X] Save Level
 - [X] Open Level
 - [X] Placing Enemy
@@ -22,7 +22,7 @@
 - [ ] Select Enemy, config how they should do
 - [ ] Allow to select other type of the Enemy
 
-### Mods Menu (Completed)
+### Mods Menu
 - [X] List mods
 - [X] Toggle mods
 - [X] Create mods button
