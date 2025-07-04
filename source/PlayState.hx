@@ -118,6 +118,11 @@ class PlayState extends FlxState
 	public var scoreText:FlxText;
 
 	/**
+	 * Display player health text
+	 */
+	public var healthText:FlxText;
+
+	/**
 	 * Current score you get
 	 * 
 	 * Default is 0
@@ -133,31 +138,39 @@ class PlayState extends FlxState
 		cameraHUD.bgColor = FlxColor.TRANSPARENT;
 		FlxG.cameras.add(cameraHUD, false);
 
-		scoreText = new FlxText(10, 10, 0, "Score: " + getScore(), 20, false);
+		scoreText = new FlxText(10, 10, 0, "Score: " + Std.string(currentScore), 20, false);
 		scoreText.setBorderStyle(OUTLINE, FlxColor.BLACK);
 		scoreText.camera = cameraHUD;
 		add(scoreText);
-	}
 
-	/**
-	 * Get current score
-	 * @return Return to string, no matter is that, muahhehehhehe
-	 */
-	public function getScore():String
-	{
-		return Std.string(currentScore);
+		healthText = new FlxText(scoreText.x, scoreText.height + 5, 0, "Health: " + Std.string(player.health), 14, false);
+		healthText.setBorderStyle(OUTLINE, FlxColor.BLACK);
+		healthText.camera = cameraHUD;
+		add(healthText);
 	}
 
 	/**
 	 * Update the current score
-	 * @param num Amount of score want to updated
-	 * @return Return to `getScore()` function
+	 * @param num Amount of score to add
+	 * @return Updated score text
 	 */
 	public function updateScore(num:Int):String
 	{
 		currentScore += num;
-		scoreText.text = "Score: " + getScore();
-		return getScore();
+		scoreText.text = "Score: " + Std.string(currentScore);
+		return scoreText.text;
+	}
+
+	/**
+	 * Update the player's health
+	 * @param num Amount of health to add/subtract
+	 * @return Updated health text
+	 */
+	public function updateHealth(num:Int):String
+	{
+		player.health += num;
+		healthText.text = "Health: " + Std.string(player.health);
+		return healthText.text;
 	}
 
 	/**
@@ -241,10 +254,9 @@ class PlayState extends FlxState
 	 * @param startFrom The position will on what side of the screen the enemy will start
 	 * @param x The tween X position
 	 * @param y The tween Y position
-	 * @param id Um, idk?, is should check when that id already exists
 	 * @return Enemy object, or null if the enemy already exists
 	 */
-	public function addEnemy(startFrom:EnemyStartForm, type:EnemyType, x:Float = 0, y:Float = 0, ?id:Int = 0)
+	public function addEnemy(startFrom:EnemyStartForm, type:EnemyType, x:Float = 0, y:Float = 0)
 	{
 		var enemy:Enemy = new Enemy(0, 0, type, startFrom);
 		var centerY = (FlxG.height - enemy.height) / 2;
@@ -260,17 +272,28 @@ class PlayState extends FlxState
 			case BOTTOM: // bottom side
 				enemy.setPosition(centerX, FlxG.height + 100);
 		}
+
 		add(enemy);
 		enemies.push(enemy);
 
-		// trace(enemy.type + '' + enemy.startFrom);
-
-		FlxTween.tween(enemy, {
-			x: x,
-			y: y
-		}, 1, {
-			ease: FlxEase.linear
-		});
+		if (type == FAST_MOVE)
+		{
+			FlxTween.tween(enemy, {
+				x: x,
+				y: y
+			}, FlxG.random.float(0.4, 0.6), {
+				ease: FlxEase.linear
+			});
+		}
+		else
+		{
+			FlxTween.tween(enemy, {
+				x: x,
+				y: y
+			}, 1, {
+				ease: FlxEase.linear
+			});
+		}
 		return enemy;
 	}
 
@@ -363,6 +386,39 @@ class PlayState extends FlxState
 	public function handleLogic():Void
 	{
 		var offsetXPlayer = [player.flipX ? -5 : 5, player.flipX ? -20 : 20];
+
+		for (enemy in enemies)
+		{
+			if (player.overlaps(enemy) && player.alive)
+			{
+				var alreadyMinus:Bool = false;
+
+				player.health -= 1;
+				player.kill();
+				player.alpha = 0;
+				if (!alreadyMinus)
+				{
+					updateHealth(-1);
+					alreadyMinus = true;
+				}
+				new FlxTimer().start(1, function(timer:FlxTimer)
+				{
+					player.revive();
+					player.x = FlxG.width - 500;
+					player.screenCenter(Y);
+					player.allowMove = player.allowBound = player.flipX = false;
+
+					FlxTween.tween(player, {x: 50, alpha: 1}, 1, {
+						ease: FlxEase.quadOut,
+						onComplete: function(tween:FlxTween)
+						{
+							player.allowMove = true;
+							player.allowBound = true;
+						}
+					});
+				});
+			}
+		}
 
 		for (bullet in bullets)
 		{
