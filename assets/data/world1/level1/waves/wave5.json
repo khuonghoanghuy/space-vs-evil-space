@@ -1,0 +1,95 @@
+{
+	"enemies": [
+		{
+			"id": "enemy_16_7",
+			"startFrom": "RIGHT",
+			"type": "LASER_SHOOTER",
+			"x": 512,
+			"y": 224
+		},
+		{
+			"id": "enemy_15_2",
+			"startFrom": "RIGHT",
+			"type": "LASER_SHOOTER",
+			"x": 480,
+			"y": 64
+		},
+		{
+			"id": "enemy_15_12",
+			"startFrom": "RIGHT",
+			"type": "LASER_SHOOTER",
+			"x": 480,
+			"y": 384
+		},
+		{
+			"id": "enemy_7_7",
+			"startFrom": "RIGHT",
+			"type": "FAST_MOVE",
+			"x": 224,
+			"y": 224
+		},
+		{
+			"id": "enemy_6_8",
+			"startFrom": "RIGHT",
+			"type": "FAST_MOVE",
+			"x": 192,
+			"y": 256
+		},
+		{
+			"id": "enemy_6_6",
+			"startFrom": "RIGHT",
+			"type": "FAST_MOVE",
+			"x": 192,
+			"y": 192
+		},
+		{
+			"id": "enemy_8_9",
+			"startFrom": "RIGHT",
+			"type": "SHOOTER",
+			"x": 256,
+			"y": 288
+		},
+		{
+			"id": "enemy_8_5",
+			"startFrom": "RIGHT",
+			"type": "SHOOTER",
+			"x": 256,
+			"y": 160
+		},
+		{
+			"id": "enemy_12_3",
+			"startFrom": "RIGHT",
+			"type": "NORMAL",
+			"x": 384,
+			"y": 96
+		},
+		{
+			"id": "enemy_12_5",
+			"startFrom": "RIGHT",
+			"type": "NORMAL",
+			"x": 384,
+			"y": 160
+		},
+		{
+			"id": "enemy_12_7",
+			"startFrom": "RIGHT",
+			"type": "NORMAL",
+			"x": 384,
+			"y": 224
+		},
+		{
+			"id": "enemy_12_9",
+			"startFrom": "RIGHT",
+			"type": "NORMAL",
+			"x": 384,
+			"y": 288
+		},
+		{
+			"id": "enemy_12_11",
+			"startFrom": "RIGHT",
+			"type": "NORMAL",
+			"x": 384,
+			"y": 352
+		}
+	]
+}
