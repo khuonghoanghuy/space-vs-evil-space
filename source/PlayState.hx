@@ -48,7 +48,7 @@ class PlayState extends FlxState
 	/**
 	 * Bullet objects when player shoot
 	 */
-	public var bullets:Array<FlxSprite> = [];
+	public var bullets:Array<Bullet> = [];
 
 	/**
 	 * Handle shot time
@@ -105,6 +105,7 @@ class PlayState extends FlxState
 		shootTimer.finished = true;
 
 		setupUI();
+		displayCard(1);
 	}
 
 	/**
@@ -304,11 +305,51 @@ class PlayState extends FlxState
 			shootTimer.start(0.1);
 		}
 
-		/**
-		 * Handle shot functions
-		 * 
-		 * Include the overlaps of the enemies and when bullet passing out of the screen
-		 */
+		handleLogic();
+		switchLevel();
+	}
+
+	/**
+	 * Handle switch level
+	 */
+	function switchLevel()
+	{
+		if (enemies.length == 0)
+		{
+			waveNum++;
+			var nextWavePath = 'world${worldNum}/level${levelNum}/waves/wave${waveNum}.json';
+			if (FlxModding.system.exists(Paths.data(nextWavePath)))
+			{
+				setupEnemy(nextWavePath);
+				displayCard(waveNum);
+			}
+			else
+			{
+				// TODO: make a Win sub class
+			}
+		}
+	}
+
+	/**
+	 * Display card every wave
+	 */
+	function displayCard(curWave:Int = 1)
+	{
+		var card:FlxText = new FlxText(0, 0, 0, "Wave: " + curWave, 34);
+		card.screenCenter();
+		card.y += 50;
+		add(card);
+
+		FlxTween.tween(card, {alpha: 0}, 1, {ease: FlxEase.sineInOut});
+	}
+
+	/**
+	 * Handle logic functions
+	 * 
+	 * Include the overlaps of the enemies and when bullet passing out of the screen
+	 */
+	function handleLogic():Void
+	{
 		for (bullet in bullets)
 		{
 			if (bullet.x > FlxG.width || bullet.x + bullet.width < 0 || bullet.y > FlxG.height || bullet.y + bullet.height < 0)
@@ -323,7 +364,7 @@ class PlayState extends FlxState
 			{
 				if (bullet.overlaps(enemy))
 				{
-					enemy.health -= player.power; // first bullet is so weak
+					enemy.health -= bullet.power; // first bullet is so weak
 					if (enemy.health <= 0)
 					{
 						FlxTween.tween(enemy, {x: enemy.x + 20, alpha: 0}, 0.15, {
@@ -371,13 +412,30 @@ class PlayState extends FlxState
 	 */
 	public function shoot()
 	{
-		var bullet = new FlxSprite((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
-		bullet.loadGraphic(Paths.images('bullet'), true, 8, 8);
-		bullet.animation.add("fire", [0, 1, 2, 3], 10, false);
-		bullet.animation.play("fire");
-		bullet.velocity.x = 600;
+		// center
+		var bullet = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
 		add(bullet);
 
+		// left side
+		var bulletLeft = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 12);
+		bulletLeft.power = 5;
+		bulletLeft.scale.set(0.4, 0.4);
+		bulletLeft.velocity.x = 1200;
+		bulletLeft.velocity.y = -40;
+		bulletLeft.angle = -40;
+		add(bulletLeft);
+
+		// right side
+		var bulletRight = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 + 4);
+		bulletRight.power = 5;
+		bulletRight.scale.set(0.4, 0.4);
+		bulletRight.velocity.x = 1200;
+		bulletRight.velocity.y = 40;
+		bulletRight.angle = 40;
+		add(bulletRight);
+
+		bullets.push(bulletLeft);
+		bullets.push(bulletRight);
 		bullets.push(bullet);
 	}
 }

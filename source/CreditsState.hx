@@ -136,6 +136,9 @@ class CreditsState extends FlxState
 				FlxG.openURL(entry.url);
 			}
 		}
+
+		if (FlxG.keys.justPressed.ESCAPE)
+			FlxG.switchState(() -> new MenuState());
 	}
 
 	function showInfo()

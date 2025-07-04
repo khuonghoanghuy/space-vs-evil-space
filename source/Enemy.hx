@@ -62,14 +62,19 @@ class Enemy extends FlxSprite
 			this.type = EnemyType.NORMAL;
 		}
 
+		changeTypeExtract();
+	}
+
+	function changeTypeExtract():Void
+	{
 		switch (this.type)
 		{
 			case NORMAL, SHOOTER:
-				health = 25;
+				health = 50;
 			case FAST_MOVE:
-				health = 10;
+				health = 20;
 			case LASER_SHOOTER:
-				health = 40;
+				health = 80;
 		}
 	}
 
@@ -106,15 +111,7 @@ class Enemy extends FlxSprite
 	{
 		this.type = newType;
 
-		switch (this.type)
-		{
-			case NORMAL, SHOOTER:
-				health = 25;
-			case FAST_MOVE:
-				health = 10;
-			case LASER_SHOOTER:
-				health = 40;
-		}
+		changeTypeExtract();
 	}
 
 	public function setStartFrom(newType:EnemyStartForm)

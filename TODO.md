@@ -39,3 +39,7 @@
     - [ ] How score get
     - [ ] Allow slow move
     - [ ] Framerate (capped from 30 to 120)
+
+### Credits Menu
+- [X] Done credits list
+- [ ] Fix the moving select

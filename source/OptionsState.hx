@@ -14,7 +14,10 @@ import options.Option;
 class OptionsState extends FlxState
 {
 	var options:Array<Option> = [
-		new Option("Allow slow move", "Move slower when hold shift", OptionType.Toggle, GameData.saveData.allowSlowMove)
+		new Option("Allow slow move", "Move slower when hold shift", OptionType.Toggle, GameData.saveData.allowSlowMove),
+		new Option("Change Framerate", "Change the capped of the FPS", OptionType.Integer(30, 120, 1), GameData.saveData.framerate),
+		new Option("How score get", "Change how score can be get\nNormal: Get the amount default value\nRandom: Get the random value from default value",
+			OptionType.Choice(["Normal", "Random"]), GameData.saveData.howScoreGet)
 	];
 	var grpOptions:FlxTypedGroup<FlxText>;
 	var curSelected:Int = 0;
@@ -74,6 +77,12 @@ class OptionsState extends FlxState
 		{
 			FlxG.switchState(() -> new MenuState());
 			GameData.saveDataSettings();
+		}
+
+		options[1].showPercentage = true;
+		options[1].onChange = function(_)
+		{
+			FlxG.updateFramerate = FlxG.drawFramerate = GameData.saveData.framerate;
 		}
 	}
 
