@@ -52,6 +52,11 @@ class Player extends FlxSprite
 			{
 				y += (FlxG.keys.pressed.DOWN ? 1 : -1) * speed * elapsed;
 			}
+
+			if (FlxG.keys.justPressed.C)
+			{
+				flipX = !flipX;
+			}
 		}
 
 		if (allowBound)

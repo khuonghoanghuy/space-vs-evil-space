@@ -241,7 +241,7 @@ class PlayState extends FlxState
 	 * @param startFrom The position will on what side of the screen the enemy will start
 	 * @param x The tween X position
 	 * @param y The tween Y position
-	 * @param id Um, idk?
+	 * @param id Um, idk?, is should check when that id already exists
 	 * @return Enemy object, or null if the enemy already exists
 	 */
 	public function addEnemy(startFrom:EnemyStartForm, type:EnemyType, x:Float = 0, y:Float = 0, ?id:Int = 0)
@@ -263,7 +263,7 @@ class PlayState extends FlxState
 		add(enemy);
 		enemies.push(enemy);
 
-		trace(enemy.type + '' + enemy.startFrom);
+		// trace(enemy.type + '' + enemy.startFrom);
 
 		FlxTween.tween(enemy, {
 			x: x,
@@ -349,9 +349,10 @@ class PlayState extends FlxState
 		var card:FlxText = new FlxText(0, 0, 0, "Wave: " + curWave, 34);
 		card.screenCenter();
 		card.y -= 100;
+		card.camera = cameraHUD;
 		add(card);
 
-		FlxTween.tween(card, {alpha: 0}, 1, {ease: FlxEase.sineInOut});
+		FlxTween.tween(card, {alpha: 0}, 1.5, {ease: FlxEase.sineInOut});
 	}
 
 	/**
@@ -361,6 +362,8 @@ class PlayState extends FlxState
 	 */
 	public function handleLogic():Void
 	{
+		var offsetXPlayer = [player.flipX ? -5 : 5, player.flipX ? -20 : 20];
+
 		for (bullet in bullets)
 		{
 			if (bullet.x > FlxG.width || bullet.x + bullet.width < 0 || bullet.y > FlxG.height || bullet.y + bullet.height < 0)
@@ -378,7 +381,7 @@ class PlayState extends FlxState
 					enemy.health -= bullet.power; // first bullet is so weak
 					if (enemy.health <= 0)
 					{
-						FlxTween.tween(enemy, {x: enemy.x + 20, alpha: 0}, 0.15, {
+						FlxTween.tween(enemy, {x: enemy.x + offsetXPlayer[1], alpha: 0}, 0.15, {
 							ease: FlxEase.linear,
 							onComplete: function(tween:FlxTween)
 							{
@@ -398,11 +401,11 @@ class PlayState extends FlxState
 					}
 					else
 					{
-						FlxTween.tween(enemy, {x: enemy.x + 5}, 0.05, {
+						FlxTween.tween(enemy, {x: enemy.x + offsetXPlayer[0]}, 0.05, {
 							ease: FlxEase.linear,
 							onComplete: function(tween:FlxTween)
 							{
-								FlxTween.tween(enemy, {x: enemy.x - 5}, 0.05, {ease: FlxEase.linear});
+								FlxTween.tween(enemy, {x: enemy.x - offsetXPlayer[0]}, 0.05, {ease: FlxEase.linear});
 							}
 						});
 					}
@@ -423,26 +426,29 @@ class PlayState extends FlxState
 	 */
 	public function shoot()
 	{
+		var offsetX = player.flipX ? -20 : 20;
+
 		// center
-		var bullet = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 4);
+		var bullet = new Bullet((player.x + player.width / 2 - 4) + offsetX, player.y + player.height / 2 - 4);
+		bullet.setSpeed_Flip(player.flipX, 800);
 		add(bullet);
 
 		// left side
-		var bulletLeft = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 - 12);
+		var bulletLeft = new Bullet((player.x + player.width / 2 - 4) + offsetX, player.y + player.height / 2 - 12);
 		bulletLeft.power = 5;
 		bulletLeft.scale.set(0.4, 0.4);
-		bulletLeft.velocity.x = 1200;
+		bulletLeft.setSpeed_Flip(player.flipX, 1000);
 		bulletLeft.velocity.y = -40;
-		bulletLeft.angle = -40;
+		bulletLeft.angle = player.flipX ? 40 : -40;
 		add(bulletLeft);
 
 		// right side
-		var bulletRight = new Bullet((player.x + player.width / 2 - 4) + 20, player.y + player.height / 2 + 4);
+		var bulletRight = new Bullet((player.x + player.width / 2 - 4) + offsetX, player.y + player.height / 2 + 4);
 		bulletRight.power = 5;
 		bulletRight.scale.set(0.4, 0.4);
-		bulletRight.velocity.x = 1200;
+		bulletRight.setSpeed_Flip(player.flipX, 1000);
 		bulletRight.velocity.y = 40;
-		bulletRight.angle = 40;
+		bulletRight.angle = player.flipX ? -40 : 40;
 		add(bulletRight);
 
 		bullets.push(bulletLeft);
