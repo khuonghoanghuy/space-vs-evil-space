@@ -4,7 +4,6 @@ import Enemy.EnemyStartForm;
 import Enemy.EnemyType;
 import flixel.FlxCamera;
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.group.FlxSpriteGroup;
@@ -326,6 +325,18 @@ class PlayState extends FlxState
 			else
 			{
 				// TODO: make a Win sub class
+				openSubState(new TextSubState("You Win :D", FlxColor.WHITE, function()
+				{
+					persistentUpdate = false;
+					FlxG.signals.preUpdate.add(function()
+					{
+						if (FlxG.keys.justPressed.ENTER)
+						{
+							closeSubState();
+							FlxG.switchState(() -> new MenuState());
+						}
+					});
+				}));
 			}
 		}
 	}
@@ -333,11 +344,11 @@ class PlayState extends FlxState
 	/**
 	 * Display card every wave
 	 */
-	function displayCard(curWave:Int = 1)
+	public function displayCard(curWave:Int = 1)
 	{
 		var card:FlxText = new FlxText(0, 0, 0, "Wave: " + curWave, 34);
 		card.screenCenter();
-		card.y += 50;
+		card.y -= 100;
 		add(card);
 
 		FlxTween.tween(card, {alpha: 0}, 1, {ease: FlxEase.sineInOut});
@@ -348,7 +359,7 @@ class PlayState extends FlxState
 	 * 
 	 * Include the overlaps of the enemies and when bullet passing out of the screen
 	 */
-	function handleLogic():Void
+	public function handleLogic():Void
 	{
 		for (bullet in bullets)
 		{

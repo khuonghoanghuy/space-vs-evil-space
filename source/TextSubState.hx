@@ -13,7 +13,7 @@ class TextSubState extends FlxSubState
 {
 	var daText:FlxText;
 
-	public function new(text:String, bgColor:FlxColor)
+	public function new(text:String, bgColor:FlxColor, ?doSomething:Void->Void)
 	{
 		super();
 
@@ -27,6 +27,11 @@ class TextSubState extends FlxSubState
 		daText.screenCenter();
 		daText.alignment = CENTER;
 		add(daText);
+
+		if (doSomething != null)
+		{
+			doSomething();
+		}
 	}
 
 	override function update(elapsed:Float)
