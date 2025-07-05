@@ -393,7 +393,6 @@ class PlayState extends FlxState
 			{
 				var alreadyMinus:Bool = false;
 
-				player.health -= 1;
 				player.kill();
 				player.alpha = 0;
 				if (!alreadyMinus)
